@@ -10,9 +10,9 @@ print(os.system('pwd'))
 for path, dnames, fnames in os.walk('.'):
 	for x in fnames:
 		if x.endswith('.ml'):
-			ml_subs[path] = fnames[0]
-		elif x.endswith('.sml'):
-			sml_subs[path] = fnames[0]
+			ml_subs[path] = x
+		elif x.endswith('.sml') and x != "Assignment-1.sml":
+			sml_subs[path] = x
 
 print('ml:', len(ml_subs))
 print('sml:', len(sml_subs), sml_subs)
