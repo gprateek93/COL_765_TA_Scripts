@@ -1,4 +1,4 @@
-use "assignment.sml";(*Use the assignment file of the student*)
+use "2015TT10917.sml";(*Use the assignment file of the student*)
 
 (*Take input from the files*)
 val infile_karat = "Test_Cases_karat.txt" ;
@@ -28,8 +28,9 @@ fun remCharR (c, s) =
     in implode (rem (explode s)) end
 
 (*final functions*)
-fun process_karat(y::z::xs:string list) = toString(karatsuba(fromSting(remCharR(#"\n",y)),fromString(remCharR(#"\n",z))))::process_karat(xs)
+
+fun process_karat(y::z::xs:string list) = toString(karatsuba (fromString(remCharR(#"\n",y))) (fromString(remCharR(#"\n",z))))::process_karat(xs)
     |process_karat [] = [];
 
-fun process_fact(y::xs:string list) = toString(factorial(fromString(remCharR(#"\n",y))))
+fun process_fact(y::xs:string list) = factorial(remCharR(#"\n",y))::process_fact(xs)
     |process_fact [] = [];
