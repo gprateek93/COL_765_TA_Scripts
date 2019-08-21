@@ -1,5 +1,14 @@
+## TO 40 min per person
+## record time 
+## pipe output from sml and write to csv
+## o/p order karat, karat exception, fact, fact exception 
+
 import os
 import re
+import subprocess
+import time
+from threading import Timer
+
 
 ml_subs = {}
 sml_subs = {}
@@ -14,8 +23,8 @@ for path, dnames, fnames in os.walk('.'):
 		elif x.endswith('.sml') and x != "Assignment-1.sml":
 			sml_subs[path] = x
 
-print('ml:', len(ml_subs))
-print('sml:', len(sml_subs), sml_subs)
+# print('ml:', len(ml_subs))
+# print('sml:', len(sml_subs), sml_subs)
 
 
 testcase_path = '/home/divyanjali/TA_Work/col765/COL_765_TA_Scripts/A1'
@@ -24,8 +33,10 @@ testcase_path = '/home/divyanjali/TA_Work/col765/COL_765_TA_Scripts/A1'
 # for subs in ml_subs:
 # 	os.system('cp ' + testcase_path + 'helper.ml "' + subs + '"')
 # 	os.system('cp ' + testcase_path + 'testcase.ml "' + subs + '"')
+kill = lambda process: process.kill()
 
 for subs in sml_subs:
+	print('\n\nchecking ', subs)
 	os.system('cp ' + testcase_path + '/Test_Cases_fact.txt "' + subs + '"')
 	os.system('cp ' + testcase_path + '/output_fact.txt "' + subs + '"')
 	os.system('cp ' + testcase_path + '/Test_Cases_karat.txt "' + subs + '"')
@@ -39,5 +50,23 @@ for subs in sml_subs:
 		org_prgm = files.read()
 		new_prgm = org_prgm.replace('use "assignment.sml";', 'use "'+ sml_subs[subs] + '";')
 	with open(filename, 'w') as files:
-		files.write(new_prgm)	
+		files.write(new_prgm)
+
+	# execute the submission
+	# sml_exec = subprocess.Popen(['time', 'sml', 'Assignment-1.sml'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+	sml_exec = subprocess.Popen(['ping', '-c', '4', 'localhost'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+
+	# stop it after 40 min
+	start_time = time.time()
+	process_timer = Timer(1, kill, [sml_exec])
+	try:
+		process_timer.start()
+		stdout,stderr = sml_exec.communicate()
+		elapsed_time = time.time() - start_time
+	finally:
+		process_timer.cancel()
+	
+	print('stdout: ', stdout)
+	print('stderr:', stderr)
+	print('elapsed time:', elapsed_time)
 	
