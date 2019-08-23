@@ -1,8 +1,10 @@
-use "2015TT10917.sml";(*Use the assignment file of the student*)
+(*use "assignment.sml";(*Use the assignment file of the student*)*)
 
 (*Take input from the files*)
 val infile_karat = "Test_Cases_karat.txt" ;
-val infile_fact = "Test_Cases_fact.txt"
+val infile_fact = "Test_Cases_fact.txt";
+val outfile_fact = "output_fact.txt";
+val outfile_karat = "output_karat.txt";
 
 (*Reads the text input from the file*)
 fun readlist (infile : string) = let
@@ -16,7 +18,9 @@ in
 end ;
 
 val list_karat = readlist(infile_karat);
-val list_fact = readlist(infile_fact)
+val list_fact = readlist(infile_fact);
+val list_output_karat = readlist(outfile_karat);
+val list_output_fact = readlist(outfile_fact);
 
 (*function to remove \n from the end of the string as our function extracts words as "abc\n"*)
 fun remCharR (c, s) =
@@ -34,3 +38,18 @@ fun process_karat(y::z::xs:string list) = toString(karatsuba (fromString(remChar
 
 fun process_fact(y::xs:string list) = factorial(remCharR(#"\n",y))::process_fact(xs)
     |process_fact [] = [];
+
+(*Evaluate*)
+
+val ans_karat = process_karat(list_karat);
+val ans_fact = process_fact(list_fact);
+
+fun equal(a,b) = (a=b);
+
+val eval_karat = equal(ans_karat,list_output_karat);
+val eval_fact = equal(ans_fact,list_output_fact);
+
+(*Evaluate exceptions*)
+
+val fact_exception = "-67";
+factorial(fact_exception);
