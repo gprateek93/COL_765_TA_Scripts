@@ -53,3 +53,12 @@ val eval_fact = equal(ans_fact,list_output_fact);
 
 val fact_exception = "-67";
 factorial(fact_exception);
+
+val karat_exception1 = ["-56784","9876543210"];
+val karat_exception2 = ["75745","64733d847"];
+val karat_exception3 = ["7856874395786782742353427538437587622735-6566","5466773"];
+
+fun karat_exception(x::y:string_list) = karatsuba(fromString(x) fromString(y));
+karat_exception(karat_exception1);
+karat_exception(karat_exception2);
+karat_exception(karat_exception3);
