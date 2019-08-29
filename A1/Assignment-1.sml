@@ -1,4 +1,4 @@
-(*use "assignment.sml";(*Use the assignment file of the student*)*)
+use "assignment.sml"; (*Use the assignment file of the student*)
 
 (*Take input from the files*)
 val infile_karat = "Test_Cases_karat.txt" ;
@@ -52,13 +52,18 @@ val eval_fact = equal(ans_fact,list_output_fact);
 (*Evaluate exceptions*)
 
 val fact_exception = "-67";
-factorial(fact_exception);
+factorial(fact_exception)
+  handle Invalid_Input_exception(a) => ("true");
 
 val karat_exception1 = ["-56784","9876543210"];
 val karat_exception2 = ["75745","64733d847"];
 val karat_exception3 = ["7856874395786782742353427538437587622735-6566","5466773"];
-
-fun karat_exception(x::y:string_list) = karatsuba(fromString(x) fromString(y));
-karat_exception(karat_exception1);
-karat_exception(karat_exception2);
-karat_exception(karat_exception3);
+ 
+fun karat_exception(x::y:string_list) = karatsuba(fromString(x) fromString(y)) 
+     
+karat_exception(karat_exception1)
+  handle Invalid_Input_exception(a) => ("true");
+karat_exception(karat_exception2)
+  handle Invalid_Input_exception(a) => ("true");
+karat_exception(karat_exception3)
+  handle Invalid_Input_exception(a) => ("true"); 
