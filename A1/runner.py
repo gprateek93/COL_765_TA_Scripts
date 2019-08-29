@@ -53,20 +53,25 @@ for subs in sml_subs:
 		files.write(new_prgm)
 
 	# execute the submission
-	# sml_exec = subprocess.Popen(['time', 'sml', 'Assignment-1.sml'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-	sml_exec = subprocess.Popen(['ping', '-c', '4', 'localhost'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+	os.chdir(subs)
+	sml_exec = subprocess.Popen(['sml', 'Assignment-1.sml'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE)
+	# sml_exec = subprocess.Popen(['pwd'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE)
+	# sml_exec.stdin.write('use "Assignment-1.sml";')
+
+	stdout,stderr = sml_exec.communicate()
 
 	# stop it after 40 min
-	start_time = time.time()
-	process_timer = Timer(1, kill, [sml_exec])
-	try:
-		process_timer.start()
-		stdout,stderr = sml_exec.communicate()
-		elapsed_time = time.time() - start_time
-	finally:
-		process_timer.cancel()
-	
+	# start_time = time.time()
+	# process_timer = Timer(1, kill, [sml_exec])
+	# try:
+	# 	process_timer.start()
+	# 	stdout,stderr = sml_exec.communicate()
+	# 	elapsed_time = time.time() - start_time
+	# finally:
+	# 	process_timer.cancel()
+
 	print('stdout: ', stdout)
 	print('stderr:', stderr)
-	print('elapsed time:', elapsed_time)
+	# print('elapsed time:', elapsed_time)
+	os.chdir("..")
 	
