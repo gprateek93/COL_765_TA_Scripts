@@ -46,15 +46,15 @@ fun remove([]) = []
 val ans_karat = process_karat(list_karat);
 val ans_fact = process_fact(list_fact);
 
-fun equalUtil(x:string, y:string, n:int) = if x=y then print("k"^Int.toString(n)^" ")
+fun equalUtil(x:string, y:string, n:int, c:string) = if x=y then print(c^Int.toString(n)^" ")
                                             else print("false ");
-fun equal(x::[]:string list,y::ys :string list,n:int) = equalUtil(x,y,n)
-    | equal(x::xs:string list,y::ys :string list,n:int) = (equalUtil(x,y,n);equal(xs,ys,n+1));
+fun equal(x::[]:string list,y::ys :string list,n:int,c:string) = equalUtil(x,y,n,c)
+    | equal(x::xs:string list,y::ys :string list,n:int,c:string) = (equalUtil(x,y,n,c);equal(xs,ys,n+1,c));
 
-list_output_fact = remove(list_output_fact);
-list_output_karat = remove(list_output_karat);
-val eval_karat = equal(ans_karat,list_output_karat,1);
-val eval_fact = equal(ans_fact,list_output_fact,1);
+val list_output_fact = remove(list_output_fact);
+val list_output_karat = remove(list_output_karat);
+val eval_karat = equal(ans_karat,list_output_karat,1,"K");
+val eval_fact = equal(ans_fact,list_output_fact,1,"F");
 
 (*Evaluate exceptions*)
 

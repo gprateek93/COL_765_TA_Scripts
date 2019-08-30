@@ -8,6 +8,7 @@ import re
 import subprocess
 import time
 from threading import Timer
+from datetime import datetime
 
 testcases = ['K1', 'K2', 'K3', 'K4', 'K5', 'KE1', 'KE2', 'KE3', 'F1', 'F2', 'F3', 'FE1']
 
@@ -74,9 +75,10 @@ for subs in sml_subs:
 
 	# execute the submission
 	os.chdir(subs)
+	print('started at:',datetime.now())
 	sml_exec = subprocess.Popen(['sml', 'Assignment-1.sml'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE)
-
 	stdout,stderr = sml_exec.communicate()
+	print('finished at:',datetime.now())
 
 	# stop it after 40 min
 	# start_time = time.time()
@@ -94,8 +96,8 @@ for subs in sml_subs:
 	os.chdir("..")
 	
 	# create results from stdout
-	row = sml_subs[subs].strip('.sml') + ', '
-	row = row + subs[2:].split('_')[0] + ', '
+	row = sml_subs[subs].strip('.sml') + ', '	# get entry no from file number
+	row = row + subs[2:].split('_')[0] + ', '	# get name from folder name
 	row = row + process_output(str(stdout))
 
 	# save results into CSV
