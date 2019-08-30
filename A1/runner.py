@@ -9,6 +9,20 @@ import subprocess
 import time
 from threading import Timer
 
+testcases = ['K1', 'K2', 'K3', 'K4', 'K5', 'KE1', 'KE2', 'KE3', 'F1', 'F2', 'F3', 'FE1']
+
+def create_entry(results, testcase):
+	if results.find(testcase) == -1:
+		return 'F, '
+	else:
+		return 'T, '
+
+def process_output(results):
+	row = ''
+	for testcase in testcases:
+		row = row + create_entry(results, testcase)
+	return row + '\n'
+
 
 ml_subs = {}
 sml_subs = {}
@@ -29,11 +43,17 @@ for path, dnames, fnames in os.walk('.'):
 
 testcase_path = '/home/divyanjali/TA_Work/col765/COL_765_TA_Scripts/A1'
 
+# create csv with heading row for results
+row = 'Entry No, Name, ' + ', '.join(testcases) + '\n'
+with open('results.csv','w') as fd:
+    fd.write(row)
+
 # # run ml files
 # for subs in ml_subs:
 # 	os.system('cp ' + testcase_path + 'helper.ml "' + subs + '"')
 # 	os.system('cp ' + testcase_path + 'testcase.ml "' + subs + '"')
-kill = lambda process: process.kill()
+
+# kill = lambda process: process.kill()	# required for timer
 
 for subs in sml_subs:
 	print('\n\nchecking ', subs)
@@ -55,8 +75,6 @@ for subs in sml_subs:
 	# execute the submission
 	os.chdir(subs)
 	sml_exec = subprocess.Popen(['sml', 'Assignment-1.sml'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE)
-	# sml_exec = subprocess.Popen(['pwd'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE)
-	# sml_exec.stdin.write('use "Assignment-1.sml";')
 
 	stdout,stderr = sml_exec.communicate()
 
@@ -75,3 +93,13 @@ for subs in sml_subs:
 	# print('elapsed time:', elapsed_time)
 	os.chdir("..")
 	
+	# create results from stdout
+	row = sml_subs[subs].strip('.sml') + ', '
+	row = row + subs[2:].split('_')[0] + ', '
+	row = row + process_output(str(stdout))
+
+	# save results into CSV
+	with open('results.csv','a') as fd:
+		fd.write(row)
+
+

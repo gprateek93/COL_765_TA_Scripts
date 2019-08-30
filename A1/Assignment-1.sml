@@ -62,11 +62,11 @@ val karat_exception3 = ["7856874395786782742353427538437587622735-6566","5466773
 fun karat_exception(x::y::xs: string list) = toString (karatsuba (fromString(x)) (fromString(y))); 
      
 karat_exception(karat_exception1)
-  handle Invalid_Input_exception(a) => ("%KE1%");
+  handle Invalid_Input_exception(a) => ("KE1");
 karat_exception(karat_exception2)
-  handle Invalid_Input_exception(a) => ("%KE2%");
+  handle Invalid_Input_exception(a) => ("KE2");
 karat_exception(karat_exception3)
-  handle Invalid_Input_exception(a) => ("%KE3%"); 
+  handle Invalid_Input_exception(a) => ("KE3"); 
 
 
 OS.Process.exit(OS.Process.success);
