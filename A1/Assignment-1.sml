@@ -39,6 +39,8 @@ fun process_karat(y::z::xs:string list) = toString(karatsuba (fromString(remChar
 fun process_fact(y::xs:string list) = factorial(remCharR(#"\n",y))::process_fact(xs)
     |process_fact [] = [];
 
+fun remove([]) = []
+    |remove(x::xs:string list) = remCharR(#"\n",x) :: remove(xs);
 (*Evaluate*)
 
 val ans_karat = process_karat(list_karat);
@@ -48,6 +50,8 @@ fun equalUtil(x:string, y:string, n:int) = if x=y then print("k"^Int.toString(n)
                                             else print("false");
 fun equal(x::xs:string list,y::ys :string list,n:int) = (equalUtil(x,y,n);equal(xs,ys,n+1));
 
+list_output_fact = remove(list_output_fact);
+list_output_karat = remove(list_output_karat);
 val eval_karat = equal(ans_karat,list_output_karat,1);
 val eval_fact = equal(ans_fact,list_output_fact,1);
 
