@@ -46,9 +46,10 @@ fun remove([]) = []
 val ans_karat = process_karat(list_karat);
 val ans_fact = process_fact(list_fact);
 
-fun equalUtil(x:string, y:string, n:int) = if x=y then print("k"^Int.toString(n))
-                                            else print("false");
-fun equal(x::xs:string list,y::ys :string list,n:int) = (equalUtil(x,y,n);equal(xs,ys,n+1));
+fun equalUtil(x:string, y:string, n:int) = if x=y then print("k"^Int.toString(n)^" ")
+                                            else print("false ");
+fun equal(x::[]:string list,y::ys :string list,n:int) = equalUtil(x,y,n)
+    | equal(x::xs:string list,y::ys :string list,n:int) = (equalUtil(x,y,n);equal(xs,ys,n+1));
 
 list_output_fact = remove(list_output_fact);
 list_output_karat = remove(list_output_karat);
