@@ -44,9 +44,10 @@ fun process_fact(y::xs:string list) = factorial(remCharR(#"\n",y))::process_fact
 val ans_karat = process_karat(list_karat);
 val ans_fact = process_fact(list_fact);
 
-fun equalUtil(x:string, y:string, n:int) = if x=y then print("k"^Int.toString(n))
-                                            else print("false");
-fun equal(x::xs:string list,y::ys :string list,n:int) = (equalUtil(x,y,n);equal(xs,ys,n+1));
+fun equalUtil(x:string, y:string, n:int) = if x=y then print("k"^Int.toString(n)^" ")
+                                            else print("false ");
+fun equal(x::[]:string list,y::ys :string list,n:int) = equalUtil(x,y,n)
+    | equal(x::xs:string list,y::ys :string list,n:int) = (equalUtil(x,y,n);equal(xs,ys,n+1));
 
 val eval_karat = equal(ans_karat,list_output_karat,1);
 val eval_fact = equal(ans_fact,list_output_fact,1);
