@@ -60,7 +60,7 @@ val eval_fact = equal(ans_fact,list_output_fact,1,"F");
 
 val fact_exception = "-67";
 factorial(fact_exception)
-  handle Invalid_Input_exception(a) => ("true");
+  handle Invalid_Input_exception(a) => ("FE1");
 
 val karat_exception1 = ["-56784","9876543210"];
 val karat_exception2 = ["75745","64733d847"];
