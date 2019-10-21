@@ -85,7 +85,7 @@ val resultstring = (case (toString t4) of 				(* .5 *)
 val results_sample = results_sample @ [resultstring];
 
 (* Test cases for normalize *)							(* .5 *)
-val resultnorm = (case (normalize t3) of 
+val resultnorm = (case (normalize t7) of 
                 Z => (1)
                 | _ => (0));
 val results_sample = results_sample @ [resultnorm];
@@ -126,12 +126,12 @@ val resultnorm = (case (toInt (t7)) of 				(* 1 *)
 				handle _ => (0);
 val results = results @ [resultnorm];
 
-val resultnorm = (case (IZ (t8)) of 				(* 1 *)
+val resultnorm = (case (normalize (IZ (t8))) of 				(* 1 *)
                 T => (1)
                 | _ => (0));
 val results = results @ [resultnorm];
 
-val resultnorm = (case (IZ (t7)) of 				(* 1 *)
+val resultnorm = (case (normalize (IZ (t7))) of 				(* 1 *)
                 T => (1)
                 | _ => (0));
 val results = results @ [resultnorm];
@@ -140,7 +140,7 @@ val temp1 = (fromInt ~1);
 val temp2 = (S t1);
 val t9 = (ITE (GTZ (P (S (P Z))), (S temp1), (P temp2)));
 val resultstring = (case (fromString "(ITE <(IZ (S Z)),(S (P Z)),(P (S Z))>)") of 	(* 1 *)
-				(ITE (GTZ (P (S (P Z))), (S temp1), (P temp2))) => (1)
+				ITE (IZ (S Z), (S (P Z)), (P (S Z))) => (1)
                 | _ => (0))
 				handle Not_wellformed => (0);
 val results = results @ [resultstring];
@@ -155,7 +155,7 @@ val resultnorm = (case (normalize (ITE (t1, T, T))) of  (* 2 *)
                 | _ => (0));
 val results = results @ [resultnorm];
 
-(* Printing the results *)
+(* Printing the computed testcase results *)
 fun printList xs = print(String.concatWith ", " (map Int.toString xs));
 fun prettyPrintList tag l = (
 	print tag;

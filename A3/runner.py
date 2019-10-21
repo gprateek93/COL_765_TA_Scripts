@@ -17,7 +17,7 @@ def process_output(results):
 	res_samples = results[results.find('sample: ')+len('sample: '):]
 	row = res_samples[1: res_samples.find(']')]
 	res_test = results[results.find('result: ')+len('result: '):]
-	row = row + res_test[1: res_test.find(']')]
+	row = row + ', ' + res_test[1: res_test.find(']')]
 	return row + '\n'
 
 
@@ -39,7 +39,7 @@ print('sml:', len(sml_subs), sml_subs)
 testcase_path = '/home/divyanjali/TA_Work/col765/COL_765_TA_Scripts/A3'
 
 # create csv with heading row for results
-row = 'Name, ' + ', '.join(sampletests) + ', '.join(testcases) + '\n'
+row = 'Name, ' + ', '.join(sampletests) + ', ' + ', '.join(testcases) + '\n'
 with open('results.csv','w') as fd:
     fd.write(row)
 
