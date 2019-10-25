@@ -147,11 +147,13 @@ val results = results @ [resultstring];
 
 val resultnorm = (case (normalize t9) of  (* 3 *)
                 VAR "abc" => (1)
+                | P (S (VAR "abc")) => (1)
                 | _ => (0));
 val results = results @ [resultnorm];
 
 val resultnorm = (case (normalize (ITE (t1, T, T))) of  (* 2 *)
                 (ITE (t1, T, T)) => (1)
+                (* | T => (1) worng *)
                 | _ => (0));
 val results = results @ [resultnorm];
 
