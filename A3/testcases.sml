@@ -153,7 +153,7 @@ val results = results @ [resultnorm];
 
 val resultnorm = (case (normalize (ITE (t1, T, T))) of  (* 2 *)
                 (ITE (t1, T, T)) => (1)
-                (* | T => (1) worng *)
+                | T => (1) 
                 | _ => (0));
 val results = results @ [resultnorm];
 
