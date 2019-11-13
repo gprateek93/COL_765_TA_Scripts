@@ -1,6 +1,58 @@
+use "signatureFLX.sml";
+use "signatureLAMBDAFLX.sml";
 use "structureLAMBDAFLX.sml";
 
 open LambdaFlx;
+
+local fun findstr ([] , str, i) = ~1
+        | findstr (x::xs, str, i) = 
+            if x = str then i
+            else findstr (xs, str, i+1)
+in fun search (ls, str) = findstr (ls, str, 0)
+end
+
+fun checkvar (s1, s2, lkeys, lvals) = 
+	let val i = search (lkeys, s1)
+	in
+		if i = ~1 then 
+			(true, s1::lkeys, s2:: lvals)
+		else (s2=List.nth(lvals, i), lkeys, lvals) 
+	end
+
+local fun isequal T T lkeys lvals = (true, lkeys, lvals)
+		| isequal F F lkeys lvals = (true, lkeys, lvals)
+		| isequal Z Z lkeys lvals = (true, lkeys, lvals)
+		| isequal (P t1) (P t2) lkeys lvals = (isequal t1 t2 lkeys lvals)
+		| isequal (S t1) (S t2) lkeys lvals = (isequal t1 t2 lkeys lvals)
+		| isequal (IZ t1) (IZ t2) lkeys lvals = (isequal t1 t2 lkeys lvals)
+		| isequal (GTZ t1) (GTZ t2) lkeys lvals = (isequal t1 t2 lkeys lvals)
+		| isequal (ITE (t1, t11, t10)) (ITE (t2, t21, t20)) lkeys lvals = 
+				let val ans1 = (isequal t1 t2 lkeys lvals)
+					val ans2 = (isequal t11 t21 (#2 ans1) (#3 ans1))
+					val ans3 = (isequal t10 t20 (#2 ans2) (#3 ans2))
+				in
+					((#1 ans1) andalso (#1 ans2) andalso (#1 ans3), (#2 ans3), (#3 ans3))
+				end
+		| isequal (LAMBDA (t11, t12)) (LAMBDA (t21, t22)) lkeys lvals = 
+				let val ans1 = (isequal t11 t21 lkeys lvals)
+					val ans2 = (isequal t12 t22 (#2 ans1) (#3 ans1))
+				in
+					((#1 ans1) andalso (#1 ans2), (#2 ans2), (#3 ans2))
+				end
+		| isequal (APP (t11, t12)) (APP (t21, t22)) lkeys lvals = 
+				let val ans1 = (isequal t11 t21 lkeys lvals)
+					val ans2 = (isequal t12 t22 (#2 ans1) (#3 ans1))
+				in
+					((#1 ans1) andalso (#1 ans2), (#2 ans2), (#3 ans2))
+				end
+		| isequal (VAR s1) (VAR s2) lkeys lvals = checkvar (s1, s2, lkeys, lvals)		
+		| isequal t1 t2 lkeys lvals = (
+				(print (toString t1));
+				(print (toString t2));
+				(false, lkeys, lvals))
+in fun iseq t1 t2 = (#1 (isequal t1 t2 [] []))
+end
+
 
 (* Terms *)
 val x = VAR "x"
@@ -44,12 +96,12 @@ val res3 = (case (betanf t2) of
 val results = results @ [res3]
 
 (* Test case 4                              1 *)
-(* (((\x [\y [(x y)]] \y(f y)) a) b) ==> ((f b) a) *)
-val t3 = APP (xyappxy, appfy)
+(* (((\x [\y [(x y)]] \y(f y)) a) b) ==> ((f a) b) *)
+val t3 = APP (xyappxy, LAMBDA (y, appfy))
 val t4 = APP (t3, a)
 val t5 = APP (t4, b)
-val res4 = (case (betanf t5) of
-                APP (APP (VAR "f", VAR "b"), VAR "a") => 1
+val res4 = (case (iseq (betanf t5) (APP (APP (VAR "f", VAR "a"), VAR "b"))) of
+                true => 1
                 | _ => 0)
                 handle _ => 0
 val results = results @ [res4]
@@ -77,8 +129,8 @@ val results = results @ [res6]
 (* Test case 7								1 *)
 (* \x [\y [ITE (x, Py, Py)]] ==> \x [\y [Py]] *)
 val t10 = LAMBDA (x, LAMBDA (y, ITE (x, (P y), (P y))))
-val res7 = (case (betanf t10) of
-                LAMBDA (VAR "x", LAMBDA (VAR "y", (P (VAR "y")))) => 1
+val res7 = (case (iseq (betanf t10) (LAMBDA (VAR "x", LAMBDA (VAR "y", (P (VAR "y")))))) of
+                true => 1
                 | _ => 0)
                 handle _ => 0
 val results = results @ [res7]
@@ -86,8 +138,8 @@ val results = results @ [res7]
 (* Test case 8								1 *)
 (* (\x [\y [ITE (x, Py, Sy)]]  T) ==> \y [Py] *)
 val t11 = APP (t9, T)
-val res8 = (case (betanf t11) of
-                LAMBDA (VAR "y", (P (VAR "y"))) => 1
+val res8 = (case (iseq (betanf t11) (LAMBDA (VAR "y", (P (VAR "y"))))) of
+                true => 1
                 | _ => 0)
                 handle _ => 0
 val results = results @ [res8]
@@ -95,8 +147,8 @@ val results = results @ [res8]
 (* Test case 9								1 *)
 (* ((\x [\y [ITE (x, Py, Sy)]]  T) SZ) ==> Z *)
 val t12 = APP (t11, (S Z))
-val res9 = (case (betanf t12) of
-                Z => 1
+val res9 = (case (iseq (betanf t12) Z) of
+                true => 1
                 | _ => 0)
                 handle _ => 0
 val results = results @ [res9]
@@ -105,8 +157,8 @@ val results = results @ [res9]
 (* GTZ ((\x [\y [ITE (x, Py, Sy)]]  T) SSZ) ==> T *)
 val t13 = APP (t11, (fromInt 2))
 val t14 = GTZ (t13)
-val res10 = (case (betanf t14) of
-                T => 1
+val res10 = (case (iseq (betanf t14) T) of
+                true => 1
                 | _ => 0)
                 handle _ => 0
 val results = results @ [res10]
@@ -114,8 +166,8 @@ val results = results @ [res10]
 (* Test case 11								1 *)
 (* GTZ ((\x [\y [ITE (x, Py, Sy)]]  T) SZ) ==> F *)
 val t15 = GTZ (t12)
-val res11 = (case (betanf t15) of
-                F => 1
+val res11 = (case (iseq (betanf t15) F) of
+                true => 1
                 | _ => 0)
                 handle _ => 0
 val results = results @ [res11]
@@ -123,8 +175,8 @@ val results = results @ [res11]
 (* Test case 12								1 *)
 (* IZ ((\x [\y [ITE (x, Py, Sy)]]  T) SSZ) ==> F *)
 val t16 = IZ (t13)
-val res12 = (case (betanf t16) of
-                F => 1
+val res12 = (case (iseq (betanf t16) F) of
+                true => 1
                 | _ => 0)
                 handle _ => 0
 val results = results @ [res12]
@@ -132,8 +184,8 @@ val results = results @ [res12]
 (* Test case 13 							1 *)
 (* IZ ((\x [\y [ITE (x, Py, Sy)]]  T) SZ) ==> T *)
 val t16 = IZ (t12)
-val res13 = (case (betanf t16) of
-                T => 1
+val res13 = (case (iseq (betanf t16) T) of
+                true => 1
                 | _ => 0)
                 handle _ => 0
 val results = results @ [res13]
@@ -141,10 +193,42 @@ val results = results @ [res13]
 (* Test case 14								1 *)
 (* (\x [IZ(x)]  (\y [Sy]  Z)) ==> F *)
 val t17 = APP (LAMBDA (x, (IZ x)),  APP (LAMBDA (y, (S y)), Z))
-val res14 = (case (betanf t17) of
-                F => 1
+val res14 = (case (iseq (betanf t17) F) of
+                true => 1
                 | _ => 0)
                 handle _ => 0
 val results = results @ [res14]
 
+(* Test case 15                             1 *)
+(* \ Px [Z] is not well formed *)
+val t18 = LAMBDA ((P x), Z)
+val res15 = (case (betanf t18) of
+                _ => 0)
+                handle Not_wellformed => 1
+                    | _ => 0
+val results = results @ [res15]
 
+(* Test case 16                             1 *)
+(* (Sx  ITE(F, x, F)) is not well typed *)
+val t19 = APP((S x), ITE(F, x, F))
+val res16 = (case (betanf t19) of
+                _ => 0)
+                handle Not_welltyped => 1
+                    | _ => 0
+val results = results @ [res16]
+
+(* Test case 17                             1 *)
+(*  *)
+
+
+
+fun printList xs = print(String.concatWith ", " (map Int.toString xs));
+fun prettyPrintList tag l = (
+	print tag;
+	print ": [";
+	printList l;
+	print "]\t");
+
+prettyPrintList "result" results;
+
+OS.Process.exit(OS.Process.success);
