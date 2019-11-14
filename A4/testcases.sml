@@ -15,7 +15,7 @@ fun checkvar (s1, s2, lkeys, lvals) =
 	let val i = search (lkeys, s1)
 	in
 		if i = ~1 then 
-			(true, s1::lkeys, s2:: lvals)
+			(true, s1::lkeys, s2::lvals)
 		else (s2=List.nth(lvals, i), lkeys, lvals) 
 	end
 
@@ -112,7 +112,7 @@ val t6 = LAMBDA (x, LAMBDA (y, APP (x, ITE (y, T, F))))
 val t7 = LAMBDA (y, (S y))
 val t8 = APP (t6, t7)
 val res5 = (case (isWellTyped t8) of
-                true => 1
+                false => 1
                 | _ => 0)
                 handle _ => 0
 val results = results @ [res5]
@@ -183,8 +183,8 @@ val results = results @ [res12]
 
 (* Test case 13 							1 *)
 (* IZ ((\x [\y [ITE (x, Py, Sy)]]  T) SZ) ==> T *)
-val t16 = IZ (t12)
-val res13 = (case (iseq (betanf t16) T) of
+val t17 = IZ (t12)
+val res13 = (case (iseq (betanf t17) T) of
                 true => 1
                 | _ => 0)
                 handle _ => 0
@@ -192,8 +192,8 @@ val results = results @ [res13]
 
 (* Test case 14								1 *)
 (* (\x [IZ(x)]  (\y [Sy]  Z)) ==> F *)
-val t17 = APP (LAMBDA (x, (IZ x)),  APP (LAMBDA (y, (S y)), Z))
-val res14 = (case (iseq (betanf t17) F) of
+val t18 = APP (LAMBDA (x, (IZ x)),  APP (LAMBDA (y, (S y)), Z))
+val res14 = (case (iseq (betanf t18) F) of
                 true => 1
                 | _ => 0)
                 handle _ => 0
@@ -201,8 +201,8 @@ val results = results @ [res14]
 
 (* Test case 15                             1 *)
 (* \ Px [Z] is not well formed *)
-val t18 = LAMBDA ((P x), Z)
-val res15 = (case (betanf t18) of
+val t19 = LAMBDA ((P x), Z)
+val res15 = (case (betanf t19) of
                 _ => 0)
                 handle Not_wellformed => 1
                     | _ => 0
@@ -210,15 +210,56 @@ val results = results @ [res15]
 
 (* Test case 16                             1 *)
 (* (Sx  ITE(F, x, F)) is not well typed *)
-val t19 = APP((S x), ITE(F, x, F))
-val res16 = (case (betanf t19) of
+val t20 = APP((S x), ITE(F, x, F))
+val res16 = (case (betanf t20) of
                 _ => 0)
                 handle Not_welltyped => 1
                     | _ => 0
 val results = results @ [res16]
 
 (* Test case 17                             1 *)
-(*  *)
+(* (\x [\y [x]]  \y [Sy]) ==> \y [\z [Sz]] *)
+val t21 = APP (LAMBDA(x, LAMBDA(y, x)), LAMBDA(y, (S y)))
+val res17 = (case (iseq (betanf t21) (LAMBDA (y, LAMBDA (z, (S z))))) of
+                true => 1
+                | _ => 0)
+                handle _ => 0
+val results = results @ [res17]
+
+(* Test case 18                             1 *)
+(* PSPSSPZ ==> Z *)
+val t22 = P(S(P(S(S(P(y))))))
+val res18 = (case (iseq (betanf t22) y) of
+                true => 1
+                | _ => 0)
+                handle _ => 0
+val results = results @ [res18]
+
+(* Test case 19                             1 *)
+val t23 = LAMBDA (y, t22)
+val res19 = (case (iseq (betanf t23) (LAMBDA(y, y))) of
+                true => 1
+                | _ => 0)
+                handle _ => 0
+val results = results @ [res19]
+
+(* Test case 20                             1 *)
+(* (\z \x \y [(x y)]  \y[Z]) *)
+val t24 = APP((LAMBDA(z, xyappxy)), LAMBDA(y, Z))
+val res20 = (case (iseq (betanf t24) xyappxy) of
+                true => 1
+                | _ => 0)
+                handle _ => 0
+val results = results @ [res20]
+
+(* Test case 21                             1 *)
+(* (\x [\y [ITE(y, SZ, PZ)]]  \y[GTZ y]) is well typed *)
+val t25 = APP( (LAMBDA (x, LAMBDA (y, ITE (y, (S Z), (P Z))))), (LAMBDA (y, GTZ(y))))
+val res21 = (case (isWellTyped t25) of
+                true => 1
+                | _ => 0)
+                handle _ => 0
+val results = results @ [res21]
 
 
 

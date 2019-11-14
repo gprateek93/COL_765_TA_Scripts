@@ -1,7 +1,3 @@
-# TODO:
-# match arbitrary variable names in tesrms returned
-
-
 import os
 import re
 import subprocess
@@ -9,7 +5,7 @@ import time
 from threading import Timer
 from datetime import datetime
 
-numtests = 16
+numtests = 21
 
 testcases = ['T'+str(i) for i in range(1,numtests+1)]
 
