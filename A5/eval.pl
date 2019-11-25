@@ -1,4 +1,9 @@
-%consult("file.pl").
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%                               COL 765: Assignment-5 Evaluation Script                               %%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%                               Author- Prateek Gupta                                                 %%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%This following code is for merge sort
 
 split([],[],[]).
 split([X],[X],[]).
@@ -14,6 +19,10 @@ mergesort([X],[X]).
 mergesort([X,Y|T],L):-split([X,Y|T],L1,L2),mergesort(L1,S1),mergesort(L2,S2),merge(S1,S2,L).
 
 
+%Code for evaluating the list by recursively calling the evaluate_list function on the 
+%sorted list and checking if the adjacent elements of the list are neighbours in the rikudo grid.
+
+
 evaluate_list([(_,_,_)]).
 evaluate_list([(A,B,C),(P,Q,R)|T]):-(((P is A-2, Q is B);
                                              (P is A+2, Q is B);
@@ -24,6 +33,7 @@ evaluate_list([(A,B,C),(P,Q,R)|T]):-(((P is A-2, Q is B);
                                              ->(R is C+1
                                              ->evaluate_list([(P,Q,R)|T]))).
 
+%This code chunks checks the preservation of the links and prefilled entries in the rikudo grid.
 
 checkLinks([(P,Q,R,S|T1)],[(A,B,_),(C,D,_)|T2]):-((P==A,Q==B,R==C,S==D)
                                                 ->checkLinks(T1,[(C,D,_)|T2])
@@ -39,10 +49,13 @@ checkPrefilled([(A,B,C)|T1],[(P,Q,R)|T2]):-(C>=R
                                             ).
 
 
+%Calling function to evaluate a  particular result.
 evaluate(Result,Prefilled,Links,N):-mergesort(Result,[H|List1]),H == (0,0,-10),mergesort(Prefilled,List2),checkLinks(Links,List1),checkPrefilled(List2,List1),evaluate_list(List1),write("TC: "),write(N),nl.
 
+%Running the test cases.
 run_tests([(N,Size,Prefilled,Links)|T]):- rikudo(Size,Prefilled,Links,Result),evaluate(Result,Prefilled,Links,N),run_tests(T).
 
+%The following code is written for reading testcases from the file and running the testcases on given file.
 
 read_file(Stream,[]) :-
     at_end_of_stream(Stream).
