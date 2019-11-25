@@ -39,4 +39,23 @@ checkPrefilled([(A,B,C)|T1],[(P,Q,R)|T2]):-(C>=R
                                             ).
 
 
-evaluate(Result,Prefilled,Links):-mergesort(Result,[H|List1]),H == (0,0,-10),mergesort(Prefilled,List2),checkLinks(Links,List1),checkPrefilled(List2,List1),evaluate_list(List1).
+evaluate(Result,Prefilled,Links,N):-mergesort(Result,[H|List1]),H == (0,0,-10),mergesort(Prefilled,List2),checkLinks(Links,List1),checkPrefilled(List2,List1),evaluate_list(List1),write("TC: "),write(N),nl.
+
+run_tests([(N,Size,Prefilled,Links)|T]):- rikudo(Size,Prefilled,Links,Result),evaluate(Result,Prefilled,Links,N),run_tests(T).
+
+
+read_file(Stream,[]) :-
+    at_end_of_stream(Stream).
+
+read_file(Stream,[X|L]) :-
+    \+ at_end_of_stream(Stream),
+    read(Stream,X),
+    read_file(Stream,L).
+
+main(Filename) :-
+    consult(Filename),
+    open('testcases.txt', read, Str),
+    read_file(Str,Lines),
+    run_tests(Lines),
+    close(Str),
+    write(Lines),nl.
