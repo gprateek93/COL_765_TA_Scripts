@@ -76,7 +76,7 @@ main(Filename) :-
     open('testcases.txt', read, Str),
     write(Filename),nl,
     read_file(Str,Lines),
-    catch(call_with_time_limit(2400,run_tests(Lines,
+    catch(call_with_time_limit(2400,run_tests(Lines),
                                     write(Filename),write(" Evaluated"),nl,
                                     close(Str))),time_limit_exceeded,writeln('overslept!')).
     
