@@ -60,7 +60,6 @@ run_tests([]).
 run_tests([(N,Size,Prefilled,Links)|T]):- (rikudo(Size,Prefilled,Links,Result),write(Result),nl,evaluate(Result,Prefilled,Links)
                                            ->write("TC: "),write(N),nl,run_tests(T)
                                            ;write("TC: Fail "),write(N),nl,run_tests(T)).
-
 %The following code is written for reading testcases from the file and running the testcases on given file.
 
 read_file(Stream,[]) :-
@@ -76,7 +75,7 @@ main(Filename) :-
     open('testcases.txt', read, Str),
     write(Filename),nl,
     read_file(Str,Lines),
-    catch(call_with_time_limit(2400,run_tests(Lines),
+    catch(call_with_time_limit(2400,(run_tests(Lines),
                                     write(Filename),write(" Evaluated"),nl,
                                     close(Str))),time_limit_exceeded,writeln('overslept!')).
     
