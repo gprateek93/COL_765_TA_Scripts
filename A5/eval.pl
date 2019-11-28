@@ -24,7 +24,7 @@ mergesort([X,Y|T],L):-split([X,Y|T],L1,L2),mergesort(L1,S1),mergesort(L2,S2),mer
 
 
 evaluate_list([(_,_,_)]).
-evaluate_list([(A,B,C),(P,Q,R)|T]):-(((P is A-2, Q is B);
+evaluate_list([(AA,BB,C),(PP,QQ,R)|T]):-A is AA, B is BB, P is PP, Q is QQ,(((P is A-2, Q is B);
                                              (P is A+2, Q is B);
                                              (P is A-1, Q is B+1);
                                              (P is A+1, Q is B+1);
@@ -75,7 +75,10 @@ main(Filename) :-
     open('testcases.txt', read, Str),
     write(Filename),nl,
     read_file(Str,Lines),
-    catch(call_with_time_limit(2400,(run_tests(Lines),
-                                    write(Filename),write(" Evaluated"),nl,
-                                    close(Str))),time_limit_exceeded,writeln('overslept!')).
+    run_tests(Lines),
+    write(Filename),write(" Evaluated"),nl,
+    close(Str).
+    %catch(call_with_time_limit(2400,(run_tests(Lines),
+                                    %write(Filename),write(" Evaluated"),nl,
+                                    %close(Str))),time_limit_exceeded,writeln('overslept!')).
     
