@@ -68,7 +68,7 @@ val appfy = APP (f, y)
 
 val results = []
 
-(* Test case 1,2                            1+1 *)
+(* Test case 1,2                   0.5+0.5 = 1 *)
 (* \ x [(x x)] is not well typed *)
 val xappxx = LAMBDA (x, appxx)
 val res1 = (case (isWellTyped xappxx) of 
@@ -214,6 +214,7 @@ val t20 = APP((S x), ITE(F, x, F))
 val res16 = (case (betanf t20) of
                 _ => 0)
                 handle Not_welltyped => 1
+                    | Not_int => 1
                     | _ => 0
 val results = results @ [res16]
 
